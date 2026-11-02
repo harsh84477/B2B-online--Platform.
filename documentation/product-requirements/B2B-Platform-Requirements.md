@@ -2,11 +2,11 @@
 
 ## Status
 
-Discovery baseline - October 2026. This document combines the initial B2B platform brief with verified findings from the imported POS source. Product-specific details remain subject to owner approval.
+Discovery baseline - November 2026. This document defines a single-business B2B ordering platform and combines the initial brief with verified findings from the imported POS source.
 
 ## Objective
 
-Create a retailer-facing B2B wholesale ordering platform that integrates with the existing POS while preserving the POS as the primary system of record.
+Create a retailer-facing B2B wholesale ordering platform for one business that integrates with the existing POS while preserving the POS as the primary system of record. This is not a SaaS or multi-tenant product.
 
 ## Current POS baseline
 
@@ -30,6 +30,27 @@ The future storefront is expected to support retailer login, product browsing, c
 
 The future integration layer is expected to support product, inventory, price, retailer, online order, and order-status synchronization.
 
+## User journeys
+
+### Business owner
+
+1. Select **Business owner** on the entry screen.
+2. Sign in with the existing business/POS account.
+3. Enter the existing POS workspace.
+4. Review incoming online orders.
+5. Accept and manage orders using POS workflows.
+6. Print the order or invoice and start preparing it.
+7. Update order status for the customer.
+
+### Retailer/customer
+
+1. Select **Customer** on the entry screen.
+2. Sign in or create a customer account through the shared Supabase project.
+3. Browse all available POS-owned products.
+4. Add products and quantities to the cart.
+5. Confirm checkout and submit an online order.
+6. View order confirmation, purchase history, and order status.
+
 ## Data ownership
 
 | Domain | Initial owner | Future storefront responsibility |
@@ -37,7 +58,7 @@ The future integration layer is expected to support product, inventory, price, r
 | Products and categories | Existing POS | Consume an approved catalog contract or projection |
 | Inventory availability | Existing POS | Display availability subject to synchronization guarantees |
 | Wholesale pricing and discounts | Existing POS/business rules | Display only approved prices and discount rules |
-| Retailer identity | To be confirmed during discovery | Authenticate and manage retailer-facing profile |
+| Customer identity | Shared Supabase project | Authenticate and manage customer-facing profile |
 | Online orders | Integration boundary with POS acceptance | Submit idempotently and show synchronization status |
 | Invoices, payments, and operational billing | Existing POS | Display approved order/invoice status only |
 
@@ -47,11 +68,10 @@ The future integration layer is expected to support product, inventory, price, r
 - Maintain secure authentication and authorization.
 - Avoid unnecessary duplication of product and inventory data.
 - Keep integration concerns separate from storefront concerns.
-- Support a future multi-distributor architecture.
+- Support one-business account and customer isolation.
 - Provide auditable synchronization and order state transitions.
 - Preserve historical price and order-line snapshots.
 - Make synchronization retries, failures, and reconciliation observable.
-- Support tenant/distributor isolation in future deployments.
 
 ## Open questions
 
@@ -59,10 +79,11 @@ The future integration layer is expected to support product, inventory, price, r
 - Which POS entities and business rules are safe and supported for reuse?
 - What are the authoritative identifiers for products, retailers, prices, inventory, and orders?
 - What synchronization frequency and consistency guarantees are required?
-- Which distributor-specific rules must be configurable?
 - What retailer roles, permissions, and onboarding flows are required?
 - Should inventory be real-time, periodically projected, or reservation-backed?
 - How should unavailable, changed, cancelled, or partially fulfilled orders be reconciled?
+- Which existing POS order states map to customer-visible statuses?
+- Which customer and purchase-history fields may be displayed?
 
 ## Acceptance criteria for implementation readiness
 
@@ -74,6 +95,7 @@ Implementation should not begin until:
 4. Product, price, inventory, and order identifiers are agreed.
 5. Failure, retry, reconciliation, audit, and observability behavior is specified.
 6. A technology and deployment decision is recorded in `planning/DECISIONS.md`.
+7. Customer account, purchase-history, and order-status visibility rules are approved.
 
 ## Requirements intake
 

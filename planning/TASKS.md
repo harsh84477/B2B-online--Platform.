@@ -26,6 +26,7 @@
 ## Implementation readiness
 
 - [x] Confirm the first implementation slice: separate storefront catalog foundation.
+- [x] Confirm single-business scope and shared Supabase identity approach.
 - [ ] Create implementation-specific tasks after discovery.
 - [ ] Establish validation, testing, and deployment requirements.
 
@@ -38,5 +39,7 @@
 - [x] Add owner/customer role entry flow.
 - [x] Add customer cart and checkout surface.
 - [ ] Connect the provider to an approved integration contract.
-- [ ] Add retailer authentication.
-- [ ] Add cart and order submission after the integration contract is approved.
+- [ ] Add owner and customer authentication through shared Supabase.
+- [ ] Add customer order submission through a server-side integration function.
+- [ ] Add customer purchase history and order-status tracking.
+- [ ] Add POS incoming-order review and preparation workflow.

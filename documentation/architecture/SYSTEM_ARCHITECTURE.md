@@ -24,7 +24,7 @@ The integration layer will isolate synchronization and translation concerns betw
 2. Keep clear ownership and direction for every synchronized field.
 3. Isolate integration failures and provide observable retry and reconciliation behavior.
 4. Preserve POS operations and compatibility.
-5. Design boundaries that can support multiple distributors in the future.
+5. Keep the design appropriate for one business and its customers; do not introduce SaaS tenant management.
 6. Apply least-privilege authentication and authorization throughout.
 
 ## Discovery gates
@@ -39,7 +39,13 @@ The authenticated application currently exposes modules for dashboard, billing, 
 
 Billing is implemented as a client query and calculation flow that submits to the Postgres `create_bill` function. That function creates bills and bill items, deducts inventory using batches, records stock movements and payments, updates customer outstanding balances, and writes an audit entry. The database function also enforces the product MRP ceiling.
 
-These findings are implementation evidence, not a final integration contract. The future storefront must use an explicit integration boundary and must not directly couple its UI to POS tables without an approved security and ownership design.
+These findings are implementation evidence, not a final integration contract. The future storefront must use an explicit integration boundary and must not directly couple its UI to POS tables without an approved security and ownership design. SaaS tenant management, subscriptions, distributor provisioning, and cross-business administration are out of scope.
+
+## Intended runtime flow
+
+The public entry screen asks whether the visitor is the business owner or a customer. Business owners authenticate against the existing business/POS account and are handed off to the POS workspace. Customers authenticate through the shared Supabase project and remain in the storefront.
+
+Customers read an approved catalog projection, create a cart, and submit an idempotent order through a server-side integration boundary. The POS remains responsible for accepting the order, inventory and pricing validation, printing, preparation, and operational fulfillment. Customer-visible order status and purchase history come from approved integration responses or projections; the browser must not write directly to POS-owned tables.
 
 ## Future diagrams
 

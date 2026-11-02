@@ -40,3 +40,17 @@ For each decision, record the date, status, context, decision, alternatives cons
 - **Decision:** The storefront starts with a role selection screen. Business owners are handed off to the configured existing POS URL; retailers enter the B2B shopping experience.
 - **Reason:** The POS and storefront have different users, permissions, and responsibilities. The storefront must not reproduce POS operations or expose them to retailers.
 - **Consequence:** The POS destination must be configured with `VITE_POS_URL`, and retailer order submission must use a secure integration boundary rather than a browser-to-database write.
+
+### ADR-006: Single-business scope
+
+- **Status:** Accepted
+- **Decision:** This platform serves one business and its retailer customers. It is not a SaaS or multi-tenant product.
+- **Reason:** The owner confirmed that tenant management, subscriptions, distributor provisioning, and cross-business administration are out of scope.
+- **Consequence:** Keep the data model and UI focused on one business account, its POS, and its customer accounts.
+
+### ADR-007: Shared Supabase identity with separate application surfaces
+
+- **Status:** Accepted
+- **Decision:** The POS and storefront use the same Supabase project for authentication, while remaining separate application surfaces.
+- **Reason:** This supports the business owner identity and customer accounts without coupling storefront presentation to POS operations.
+- **Consequence:** Customer roles, profiles, order access, and RLS policies must be explicitly defined before real authentication and order persistence are enabled.

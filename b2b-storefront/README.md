@@ -14,6 +14,8 @@ The first implementation slice is a standalone Vite, React, and TypeScript catal
 - No invented product data
 - Owner handoff uses the configured `VITE_POS_URL`
 - Order submission remains blocked until the integration contract is connected
+- Owner authentication will use the existing POS account through the shared Supabase project
+- Customer authentication, purchase history, and order-status tracking will use the shared Supabase project
 
 The current provider intentionally reports that the approved integration boundary is not configured. Product data, prices, and availability must come from the POS-owned catalog through that boundary.
 
