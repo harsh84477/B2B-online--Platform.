@@ -25,6 +25,8 @@ temp/
 node_modules/
 dist/
 build/
+.next/
+.turbo/
 coverage/
 .cache/
 __pycache__/
