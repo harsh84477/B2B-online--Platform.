@@ -33,3 +33,10 @@ For each decision, record the date, status, context, decision, alternatives cons
 - **Decision:** Begin implementation in `b2b-storefront/` as a standalone Vite, React, and TypeScript application, starting with the retailer catalog experience.
 - **Reason:** This allows storefront UX and typed boundaries to be developed without modifying the POS or coupling the browser directly to POS-owned tables.
 - **Consequence:** The catalog provider remains disconnected until an approved integration API and security model are finalized. No product, price, or inventory fixtures are presented as real POS data.
+
+### ADR-005: Separate owner and retailer entry points
+
+- **Status:** Accepted
+- **Decision:** The storefront starts with a role selection screen. Business owners are handed off to the configured existing POS URL; retailers enter the B2B shopping experience.
+- **Reason:** The POS and storefront have different users, permissions, and responsibilities. The storefront must not reproduce POS operations or expose them to retailers.
+- **Consequence:** The POS destination must be configured with `VITE_POS_URL`, and retailer order submission must use a secure integration boundary rather than a browser-to-database write.

@@ -35,6 +35,8 @@
 - [x] Add typed catalog provider boundary.
 - [x] Add catalog search and category filtering UI.
 - [x] Add explicit disconnected-integration state.
+- [x] Add owner/customer role entry flow.
+- [x] Add customer cart and checkout surface.
 - [ ] Connect the provider to an approved integration contract.
 - [ ] Add retailer authentication.
 - [ ] Add cart and order submission after the integration contract is approved.

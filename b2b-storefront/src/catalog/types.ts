@@ -25,3 +25,16 @@ export interface CatalogSnapshot {
 export interface CatalogProvider {
   getCatalog(): Promise<CatalogSnapshot>;
 }
+
+export interface CustomerOrderLine {
+  productId: string;
+  quantity: number;
+}
+
+export interface CustomerOrder {
+  lines: CustomerOrderLine[];
+}
+
+export interface OrderProvider {
+  submitOrder(order: CustomerOrder): Promise<{ orderId: string }>;
+}
