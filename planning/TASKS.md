@@ -25,7 +25,16 @@
 
 ## Implementation readiness
 
-- [ ] Confirm scope and priorities with the project owner.
+- [x] Confirm the first implementation slice: separate storefront catalog foundation.
 - [ ] Create implementation-specific tasks after discovery.
 - [ ] Establish validation, testing, and deployment requirements.
 
+## First implementation slice
+
+- [x] Create the standalone storefront application shell.
+- [x] Add typed catalog provider boundary.
+- [x] Add catalog search and category filtering UI.
+- [x] Add explicit disconnected-integration state.
+- [ ] Connect the provider to an approved integration contract.
+- [ ] Add retailer authentication.
+- [ ] Add cart and order submission after the integration contract is approved.

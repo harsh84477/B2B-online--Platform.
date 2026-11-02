@@ -27,3 +27,9 @@ For each decision, record the date, status, context, decision, alternatives cons
 - **Reason:** Separation supports maintainability, observability, security, and future multi-distributor support.
 - **Consequence:** Future implementation must define explicit contracts between the storefront, integration layer, and POS.
 
+### ADR-004: Start with a separate storefront catalog foundation
+
+- **Status:** Accepted
+- **Decision:** Begin implementation in `b2b-storefront/` as a standalone Vite, React, and TypeScript application, starting with the retailer catalog experience.
+- **Reason:** This allows storefront UX and typed boundaries to be developed without modifying the POS or coupling the browser directly to POS-owned tables.
+- **Consequence:** The catalog provider remains disconnected until an approved integration API and security model are finalized. No product, price, or inventory fixtures are presented as real POS data.
