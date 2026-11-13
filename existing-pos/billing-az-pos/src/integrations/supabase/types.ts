@@ -571,6 +571,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_deleted: boolean
+          is_online: boolean
           mobile: string | null
           name: string
           outstanding_balance: number
@@ -587,6 +588,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_deleted?: boolean
+          is_online?: boolean
           mobile?: string | null
           name: string
           outstanding_balance?: number
@@ -603,6 +605,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_deleted?: boolean
+          is_online?: boolean
           mobile?: string | null
           name?: string
           outstanding_balance?: number

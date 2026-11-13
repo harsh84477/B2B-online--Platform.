@@ -11,6 +11,7 @@ export interface CatalogProduct {
   categoryName: string | null;
   brand: string | null;
   imageUrl: string | null;
+  description: string | null;
   wholesalePrice: number | null;
   currency: string;
   availableQuantity: number | null;

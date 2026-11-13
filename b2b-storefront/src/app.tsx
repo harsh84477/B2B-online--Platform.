@@ -134,7 +134,18 @@ function CustomerStore({ onBack }: { onBack: () => void }) {
   const cartCount = cartLines.reduce((total, [, quantity]) => total + quantity, 0);
 
   function addToCart(product: CatalogProduct) {
-    setCart((current) => ({ ...current, [product.id]: (current[product.id] ?? 0) + 1 }));
+    const availableQuantity = product.availableQuantity ?? 0;
+    if (availableQuantity <= 0) {
+      setOrderMessage(`${product.name} is currently out of stock.`);
+      return;
+    }
+    setCart((current) => {
+      const nextQuantity = (current[product.id] ?? 0) + 1;
+      return {
+        ...current,
+        [product.id]: Math.min(nextQuantity, availableQuantity),
+      };
+    });
     setOrderMessage(null);
   }
 
@@ -142,7 +153,11 @@ function CustomerStore({ onBack }: { onBack: () => void }) {
     setCart((current) => {
       const next = { ...current };
       if (quantity <= 0) delete next[productId];
-      else next[productId] = quantity;
+      else {
+        const availableQuantity =
+          catalog.products.find((product) => product.id === productId)?.availableQuantity ?? 0;
+        next[productId] = Math.min(quantity, Math.max(availableQuantity, 0));
+      }
       return next;
     });
   }
@@ -192,7 +207,7 @@ function CustomerStore({ onBack }: { onBack: () => void }) {
           {loading && <div className="state-card">Loading approved catalog…</div>}
           {!loading && error && <div className="state-card error-state" role="alert"><strong>Catalog is not connected yet.</strong><p>{error}</p><small>No product data is shown until the integration boundary is configured.</small></div>}
           {!loading && !error && products.length === 0 && <div className="state-card"><strong>No products available.</strong><p>Connect the approved catalog source to display POS-owned products and availability.</p></div>}
-          {!loading && !error && products.length > 0 && <div className="product-grid">{products.map((product) => <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt="" /> : <span>{product.name.slice(0, 1).toUpperCase()}</span>}</div><div className="product-details"><small>{product.brand ?? "Wholesale product"}</small><h3>{product.name}</h3><p>SKU {product.sku}</p><div className="product-footer"><strong>{product.wholesalePrice === null ? "Price after sign in" : `${product.currency}${product.wholesalePrice.toFixed(2)}`}</strong><button className="primary-button" type="button" onClick={() => addToCart(product)}>Add</button></div></div></article>)}</div>}
+          {!loading && !error && products.length > 0 && <div className="product-grid">{products.map((product) => { const outOfStock = product.availableQuantity !== null && product.availableQuantity <= 0; return <article className="product-card" key={product.id}><div className="product-image">{product.imageUrl ? <img src={product.imageUrl} alt={product.name} /> : <span>{product.name.slice(0, 1).toUpperCase()}</span>}</div><div className="product-details"><small>{product.brand ?? "Wholesale product"}</small><h3>{product.name}</h3><p>SKU {product.sku}</p>{product.description && <p className="product-description">{product.description}</p>}<div className="product-footer"><strong>{outOfStock ? "Out of stock" : product.wholesalePrice === null ? "Price after sign in" : `${product.currency}${product.wholesalePrice.toFixed(2)}`}</strong><button className="primary-button" type="button" onClick={() => addToCart(product)} disabled={outOfStock}>{outOfStock ? "Unavailable" : "Add"}</button></div></div></article>; })}</div>}
         </section>
         <section className="cart-section" id="cart" aria-labelledby="cart-heading">
           <div><p className="eyebrow">Your order</p><h2 id="cart-heading">Cart and checkout</h2></div>

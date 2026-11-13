@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Loader2, ScanBarcode } from "lucide-react";
+import { Loader2, MailQuestion, ScanBarcode } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +61,7 @@ function AuthPage() {
   const [staffCode, setStaffCode] = useState("");
   const [remember, setRemember] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [resetBusy, setResetBusy] = useState(false);
 
   useEffect(() => {
     if (session && role) navigate({ to: ROLE_HOME[role], replace: true });
@@ -147,6 +148,27 @@ function AuthPage() {
       toast.error(err instanceof Error ? err.message : "Sign in failed");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handlePasswordReset() {
+    const resetEmail = email.trim();
+    if (!resetEmail) {
+      toast.error("Enter your email address first.");
+      return;
+    }
+
+    setResetBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast.success("Password reset email sent. Check your inbox.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Could not send password reset email");
+    } finally {
+      setResetBusy(false);
     }
   }
 
@@ -266,6 +288,19 @@ function AuthPage() {
                 required
               />
             </div>
+            {mode === "signin" && (
+              <Button
+                type="button"
+                variant="link"
+                className="h-auto p-0 text-sm"
+                onClick={handlePasswordReset}
+                disabled={busy || resetBusy}
+              >
+                {resetBusy && <Loader2 className="size-4 animate-spin" />}
+                {!resetBusy && <MailQuestion className="size-4" />}
+                Forgot password? Send a reset email
+              </Button>
+            )}
             <div className="flex items-center gap-2">
               <Checkbox
                 id="remember"

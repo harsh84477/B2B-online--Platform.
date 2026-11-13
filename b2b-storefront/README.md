@@ -13,11 +13,11 @@ The first implementation slice is a standalone Vite, React, and TypeScript catal
 - No direct POS database access
 - No invented product data
 - Owner handoff uses the configured `VITE_POS_URL`
-- Order submission remains blocked until the integration contract is connected
+- Orders are submitted to the POS-owned online order queue through a guarded Supabase RPC
 - Owner authentication will use the existing POS account through the shared Supabase project
 - Customer authentication, purchase history, and order-status tracking will use the shared Supabase project
 
-The current provider intentionally reports that the approved integration boundary is not configured. Product data, prices, and availability must come from the POS-owned catalog through that boundary.
+The catalog provider reads the POS-owned online catalog through Supabase. Products must be marked **Show in ecommerce** in the POS, and the storefront requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
 ## Development
 
@@ -27,4 +27,6 @@ npm run dev
 npm run build
 ```
 
-The next approved slice should connect `src/catalog/provider.ts` to the integration contract after the API and security design are finalized.
+The POS migration `20261113000000_add_online_order_boundary.sql` must be applied before
+deploying checkout. POS staff can then review pending orders from the `online_orders` queue
+and accept them through the normal billing workflow.

@@ -63,6 +63,8 @@ const emptyDraft: Draft = {
   barcode: "",
   category_id: "",
   brand: "",
+  image_url: "",
+  description: "",
   hsn_code: "",
   purchase_price: 0,
   selling_price: 0,
@@ -77,6 +79,7 @@ const emptyDraft: Draft = {
   current_stock: 0,
   min_stock_alert: 10,
   is_active: true,
+  is_online: false,
 };
 
 function ProductsPage() {
@@ -112,6 +115,8 @@ function ProductsPage() {
         barcode: d['barcode'] ? String(d['barcode']) : null,
         category_id: d['category_id'] ? String(d['category_id']) : null,
         brand: d['brand'] ? String(d['brand']) : null,
+        image_url: d['image_url'] ? String(d['image_url']) : null,
+        description: d['description'] ? String(d['description']) : null,
         hsn_code: d['hsn_code'] ? String(d['hsn_code']) : null,
         purchase_price: Number(d['purchase_price']) || 0,
         selling_price: Number(d['selling_price']) || 0,
@@ -126,6 +131,7 @@ function ProductsPage() {
         current_stock: Math.trunc(Number(d['current_stock']) || 0),
         min_stock_alert: Math.trunc(Number(d['min_stock_alert']) || 0),
         is_active: !!d['is_active'],
+        is_online: !!d['is_online'],
       };
       if (!payload.name || !payload.sku) throw new Error("Name and SKU are required");
       if (d['id']) {
@@ -465,6 +471,21 @@ function ProductsPage() {
                   onChange={(e) => setDraft({ ...draft, brand: e.target.value })}
                 />
               </Field>
+              <Field label="Image URL">
+                <Input
+                  type="url"
+                  placeholder="https://..."
+                  value={String(draft['image_url'] ?? "")}
+                  onChange={(e) => setDraft({ ...draft, image_url: e.target.value })}
+                />
+              </Field>
+              <Field label="Description">
+                <textarea
+                  className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                  value={String(draft['description'] ?? "")}
+                  onChange={(e) => setDraft({ ...draft, description: e.target.value })}
+                />
+              </Field>
               <Field label="Category">
                 <Select
                   value={String(draft['category_id'] ?? "")}
@@ -592,6 +613,11 @@ function ProductsPage() {
                   label="Active"
                   checked={!!draft['is_active']}
                   onChange={(v) => setDraft({ ...draft, is_active: v })}
+                />
+                <ToggleField
+                  label="Show in ecommerce"
+                  checked={!!draft['is_online']}
+                  onChange={(v) => setDraft({ ...draft, is_online: v })}
                 />
               </div>
             </div>
