@@ -12,7 +12,17 @@ import type {
 type UserType = "owner" | "customer";
 type Cart = Record<string, number>;
 
-const emptyCatalog: CatalogSnapshot = { categories: [], products: [] };
+const emptyCatalog: CatalogSnapshot = {
+  categories: [],
+  products: [],
+  ecommerce: {
+    isEnabled: true,
+    bannerEnabled: true,
+    bannerTitle: "Stock up with confidence.",
+    bannerSubtitle: "Browse approved wholesale products and send your order to the POS.",
+    bannerImageUrl: null,
+  },
+};
 const catalogProvider = new IntegrationCatalogProvider();
 const orderProvider = new IntegrationOrderProvider();
 const posUrl = import.meta.env.VITE_POS_URL as string | undefined;
@@ -133,6 +143,19 @@ function CustomerStore({ onBack }: { onBack: () => void }) {
   );
   const cartCount = cartLines.reduce((total, [, quantity]) => total + quantity, 0);
 
+  if (!loading && !error && !catalog.ecommerce.isEnabled) {
+    return (
+      <div className="app-shell centered-shell">
+        <main className="entry-card">
+          <p className="eyebrow">Retailer storefront</p>
+          <h1>Ordering is temporarily closed.</h1>
+          <p>The business owner has paused online ordering. Please try again later.</p>
+          <button className="text-button" type="button" onClick={onBack}>← Choose a different role</button>
+        </main>
+      </div>
+    );
+  }
+
   function addToCart(product: CatalogProduct) {
     const availableQuantity = product.availableQuantity ?? 0;
     if (availableQuantity <= 0) {
@@ -190,10 +213,19 @@ function CustomerStore({ onBack }: { onBack: () => void }) {
         <section className="hero">
           <div>
             <p className="eyebrow">Wholesale ordering, simplified</p>
-            <h1>Stock up with confidence.</h1>
-            <p className="hero-copy">Browse approved wholesale products, build your order, and send it to the business POS.</p>
+            {catalog.ecommerce.bannerEnabled ? (
+              <>
+                <h1>{catalog.ecommerce.bannerTitle}</h1>
+                <p className="hero-copy">{catalog.ecommerce.bannerSubtitle}</p>
+              </>
+            ) : (
+              <>
+                <h1>Wholesale products, ready when you are.</h1>
+                <p className="hero-copy">Browse approved products, build your order, and send it to the business POS.</p>
+              </>
+            )}
           </div>
-          <div className="hero-card"><span className="hero-card-label">For retailers</span><strong>Clear prices. Reliable stock.</strong><span>Your order will be accepted and managed by the business POS.</span></div>
+          <div className="hero-card" style={catalog.ecommerce.bannerImageUrl ? { backgroundImage: `url(${catalog.ecommerce.bannerImageUrl})` } : undefined}><span className="hero-card-label">For retailers</span><strong>Clear prices. Reliable stock.</strong><span>Your order will be accepted and managed by the business POS.</span></div>
         </section>
         <section className="catalog-section" aria-labelledby="catalog-heading">
           <div className="section-heading">

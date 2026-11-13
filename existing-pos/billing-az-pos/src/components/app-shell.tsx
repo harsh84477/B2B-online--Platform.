@@ -18,6 +18,8 @@ import {
   Wallet,
   BarChart3,
   Settings,
+  ClipboardList,
+  Globe,
   FileText,
   Undo2,
   PanelLeftClose,
@@ -39,11 +41,13 @@ const NAV = [
   { to: "/products", label: "Products", icon: Package },
   { to: "/inventory", label: "Inventory", icon: Boxes },
   { to: "/purchases", label: "Purchases", icon: ShoppingCart },
+  { to: "/online-orders", label: "Online Orders", icon: ClipboardList },
   { to: "/customers", label: "Customers", icon: Users },
   { to: "/suppliers", label: "Suppliers", icon: Truck },
   { to: "/expenses", label: "Expenses", icon: Wallet },
   { to: "/reports", label: "Reports", icon: BarChart3 },
   { to: "/settings", label: "Settings", icon: Settings },
+  { to: "/ecommerce", label: "Manage Ecommerce", icon: Globe },
 ] as const;
 
 const STORAGE_KEY = "billingaz.sidebar.collapsed";

@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PageHeader, PageShell, EmptyState } from "@/components/page";
+import { UploadField } from "@/components/settings/kit";
 import { categoriesQuery } from "@/lib/queries";
 import { allProductsQuery } from "@/lib/admin-queries";
 import { GST_SLABS, formatQty, rupees } from "@/lib/pos";
@@ -471,14 +472,12 @@ function ProductsPage() {
                   onChange={(e) => setDraft({ ...draft, brand: e.target.value })}
                 />
               </Field>
-              <Field label="Image URL">
-                <Input
-                  type="url"
-                  placeholder="https://..."
-                  value={String(draft['image_url'] ?? "")}
-                  onChange={(e) => setDraft({ ...draft, image_url: e.target.value })}
-                />
-              </Field>
+              <UploadField
+                label="Product image"
+                hint="Upload a PNG or JPG for the storefront"
+                value={String(draft['image_url'] ?? "")}
+                onChange={(value) => setDraft({ ...draft, image_url: value })}
+              />
               <Field label="Description">
                 <textarea
                   className="min-h-24 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"

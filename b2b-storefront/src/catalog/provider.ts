@@ -27,12 +27,13 @@ export class IntegrationCatalogProvider implements CatalogProvider {
   async getCatalog(): Promise<CatalogSnapshot> {
     const { url, key } = getSupabaseConfig();
     const headers = getHeaders(key);
-    const [productsResponse, categoriesResponse] = await Promise.all([
+    const [productsResponse, categoriesResponse, settingsResponse] = await Promise.all([
       fetch(
         `${url}/rest/v1/products?select=id,name,sku,category_id,brand,image_url,description,wholesale_price,current_stock,pack_name,base_unit&order=name`,
         { headers },
       ),
       fetch(`${url}/rest/v1/categories?select=id,name&order=sort_order`, { headers }),
+      fetch(`${url}/rest/v1/ecommerce_settings?select=is_enabled,banner_enabled,banner_title,banner_subtitle,banner_image_url&id=eq.true`, { headers }),
     ]);
     if (!productsResponse.ok || !categoriesResponse.ok) {
       throw new Error("Unable to load the ecommerce catalog from the POS.");
@@ -52,8 +53,26 @@ export class IntegrationCatalogProvider implements CatalogProvider {
       base_unit: string | null;
     }>;
     const categories = (await categoriesResponse.json()) as Array<{ id: string; name: string }>;
+    const settings = settingsResponse.ok
+      ? ((await settingsResponse.json()) as Array<{
+          is_enabled: boolean;
+          banner_enabled: boolean;
+          banner_title: string;
+          banner_subtitle: string;
+          banner_image_url: string | null;
+        }>)[0]
+      : undefined;
     return {
       categories,
+      ecommerce: {
+        isEnabled: settings?.is_enabled ?? true,
+        bannerEnabled: settings?.banner_enabled ?? true,
+        bannerTitle: settings?.banner_title ?? "Stock up with confidence.",
+        bannerSubtitle:
+          settings?.banner_subtitle ??
+          "Browse approved wholesale products and send your order to the POS.",
+        bannerImageUrl: settings?.banner_image_url ?? null,
+      },
       products: products.map((product) => ({
         id: product.id,
         name: product.name,

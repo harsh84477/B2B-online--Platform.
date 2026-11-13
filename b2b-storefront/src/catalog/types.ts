@@ -21,6 +21,13 @@ export interface CatalogProduct {
 export interface CatalogSnapshot {
   categories: CatalogCategory[];
   products: CatalogProduct[];
+  ecommerce: {
+    isEnabled: boolean;
+    bannerEnabled: boolean;
+    bannerTitle: string;
+    bannerSubtitle: string;
+    bannerImageUrl: string | null;
+  };
 }
 
 export interface CatalogProvider {
