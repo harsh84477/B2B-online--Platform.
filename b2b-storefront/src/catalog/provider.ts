@@ -27,13 +27,14 @@ export class IntegrationCatalogProvider implements CatalogProvider {
   async getCatalog(): Promise<CatalogSnapshot> {
     const { url, key } = getSupabaseConfig();
     const headers = getHeaders(key);
-    const [productsResponse, categoriesResponse, settingsResponse] = await Promise.all([
+    const [productsResponse, categoriesResponse, settingsResponse, packOptionsResponse] = await Promise.all([
       fetch(
         `${url}/rest/v1/products?select=id,name,sku,category_id,brand,image_url,description,wholesale_price,current_stock,pack_name,base_unit&order=name`,
         { headers },
       ),
       fetch(`${url}/rest/v1/categories?select=id,name&order=sort_order`, { headers }),
       fetch(`${url}/rest/v1/ecommerce_settings?select=is_enabled,banner_enabled,banner_title,banner_subtitle,banner_image_url&id=eq.true`, { headers }),
+      fetch(`${url}/rest/v1/online_product_pack_options?select=product_id,quantity,label,is_enabled&order=sort_order`, { headers }),
     ]);
     if (!productsResponse.ok || !categoriesResponse.ok) {
       throw new Error("Unable to load the ecommerce catalog from the POS.");
@@ -53,6 +54,9 @@ export class IntegrationCatalogProvider implements CatalogProvider {
       base_unit: string | null;
     }>;
     const categories = (await categoriesResponse.json()) as Array<{ id: string; name: string }>;
+    const packOptions = packOptionsResponse.ok
+      ? (await packOptionsResponse.json()) as Array<{ product_id: string; quantity: number; label: string; is_enabled: boolean }>
+      : [];
     const settings = settingsResponse.ok
       ? ((await settingsResponse.json()) as Array<{
           is_enabled: boolean;
@@ -81,6 +85,18 @@ export class IntegrationCatalogProvider implements CatalogProvider {
         categoryName: categories.find((category) => category.id === product.category_id)?.name ?? null,
         brand: product.brand,
         imageUrl: product.image_url,
+        imageUrls: product.image_url
+          ? [product.image_url, product.image_url]
+          : [],
+        packOptions: (packOptions.filter((option) => option.product_id === product.id && option.is_enabled)
+          .map((option) => ({ quantity: option.quantity, label: option.label, isEnabled: option.is_enabled })))
+          .concat(packOptions.some((option) => option.product_id === product.id)
+            ? []
+            : [
+                { quantity: 1, label: "1 pack", isEnabled: true },
+                { quantity: 2, label: "Pack of 2", isEnabled: true },
+                { quantity: 5, label: "Pack of 5", isEnabled: true },
+              ]),
         description: product.description,
         wholesalePrice: product.wholesale_price,
         currency: "₹",

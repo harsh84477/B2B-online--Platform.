@@ -3,6 +3,12 @@ export interface CatalogCategory {
   name: string;
 }
 
+export interface CatalogPackOption {
+  quantity: number;
+  label: string;
+  isEnabled: boolean;
+}
+
 export interface CatalogProduct {
   id: string;
   name: string;
@@ -11,6 +17,8 @@ export interface CatalogProduct {
   categoryName: string | null;
   brand: string | null;
   imageUrl: string | null;
+  imageUrls: string[];
+  packOptions: CatalogPackOption[];
   description: string | null;
   wholesalePrice: number | null;
   currency: string;
@@ -41,6 +49,19 @@ export interface CustomerOrderLine {
 
 export interface CustomerOrder {
   lines: CustomerOrderLine[];
+  customer: CustomerDetails;
+}
+
+export interface CustomerDetails {
+  businessName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  address: string;
+  city: string;
+  state: string;
+  postalCode: string;
+  notes: string;
 }
 
 export interface OrderProvider {
